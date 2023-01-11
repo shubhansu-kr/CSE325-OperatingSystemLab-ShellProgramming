@@ -61,3 +61,8 @@ mv *.txt Shubhansu
 # 5. Create multiple directories in a single command 
 mkdir dir1 dir2 dir3 
 
+# to Create multiple subdirectories inside the an existing folder, if parent dir does not exist
+# we can use -p to create the parent dir also
+
+mkdir -p abc/{x,y,z} 
+# Creates a dir abc and three sub folder inside abc namely x, y, z;

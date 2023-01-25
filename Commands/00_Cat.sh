@@ -1,3 +1,5 @@
+# !/bin/bash
+
 # Cat Command
 
 cat text1.txt

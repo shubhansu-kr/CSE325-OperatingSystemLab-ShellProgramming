@@ -28,3 +28,8 @@ rm -d dirName # Need to add -d to remove empty dir.
 
 mv file1.txt file2.txt # rename file1 to file2.
 
+chmod u+x file1.sh # grant permission to user to execute
+chmod u+rwx file.sh # grant all the permission to users.
+
+# rwx : rwx : rwx :: user : group : other user
+

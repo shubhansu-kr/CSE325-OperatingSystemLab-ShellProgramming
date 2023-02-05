@@ -1,11 +1,10 @@
 # !/bin/bash
 
-read -p "Enter a positive number : " num 
+echo "---------Print Primes---------"
+read -p "Enter UpperLimit: " limit
 
-if [ $num -le 1 ] 
-then 
-    echo "Neither Prime Nor Composite"
-else 
+for ((num=2; num <= $limit; num++))
+do 
     count=0
     for((i = 1; i <= $num; i++))
     do 
@@ -17,8 +16,7 @@ else
 
     if [ $count -eq 2 ]
     then 
-        echo "$num is Prime"
-    else 
-        echo "$num is not Prime"
+        echo "$num"
     fi 
-fi 
+
+done 

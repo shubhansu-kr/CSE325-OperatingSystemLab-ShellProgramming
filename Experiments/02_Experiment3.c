@@ -20,6 +20,127 @@ void practice()
     printf("Hello World");
 }
 
+void printWithoutUsingCharArray() {
+    // Exercise Q3
+    char ch;
+    int counter = 0;
+    char buffer[1];
+    int fd = open("Sample.txt", O_WRONLY | O_APPEND);
+
+    printf("Enter $ to exit \n");
+    do
+    {   
+        scanf("%c", &ch);
+        buffer[0] = ch;
+        write(fd, buffer, 1);
+    } while (ch != '$');
+    
+    return;
+}
+
+void consoleToFile(){
+    // Exercise Q2
+
+    int maxSize;
+    printf("Enter the max Size of buffer: ");
+    scanf("%d", &maxSize);
+
+    char *buffer = (char *)malloc((maxSize + 1) * sizeof(char));
+
+    char ch;
+    int counter = 0;
+
+    printf("Enter $ to exit \n");
+    do
+    {   
+        printf("Enter char: ");
+        scanf("%c", &ch);
+        buffer[counter++] = ch;
+    } while (ch != '$');
+
+    buffer[counter] = '\0';
+
+    int fd = open("Sample.txt", O_WRONLY);
+    write(fd, buffer, counter);
+
+
+    for (int i = 0; i < buffer[i] != '\0'; ++i)
+    {
+        printf("%c", buffer[i]);
+    }
+    
+    return;
+}
+
+void halfSize()
+{
+    // Exercise Q1;
+    int fd;
+
+    fd = open("Sample.txt", O_RDONLY);
+    printf("%d\n", fd);
+
+    int fileSize = lseek(fd, 0, SEEK_END);
+    int halfSize = fileSize / 2;
+    printf("%d\n", fileSize);
+    printf("%d\n", halfSize);
+
+    // Create buffer to store.
+    char *buffer1 = (char *)malloc((halfSize + 1) * sizeof(char));
+    char *buffer2 = (char *)malloc((halfSize + 1) * sizeof(char));
+
+    // read half of the file.
+    lseek(fd, 0, 0);
+    int rd1 = read(fd, buffer1, halfSize);
+    lseek(fd, 0, halfSize);
+    int rd2 = read(fd, buffer2, halfSize);
+
+    printf("%d %d\n", rd1, rd2);
+
+    buffer1[rd1] = '\0';
+    buffer2[rd2] = '\0';
+
+    int newFd1 = open("Sample1.txt", O_CREAT | O_WRONLY, 0777);
+    int newFd2 = open("Sample2.txt", O_CREAT | O_WRONLY, 0777);
+
+    int wr1 = write(newFd1, buffer1, rd1);
+    int wr2 = write(newFd2, buffer2, rd2);
+}
+
+void appendInFile()
+{
+    int n, m;
+
+    char buffer[100];
+
+    // write(fd, char[], len): Writes len bytes into fd file from char array.
+    // return Number of bytes written on success
+    // return 0 on reaching end of file
+    // return -1 on error
+    // return -1 on signal interrupt
+    n = write(1, "HelloWorld", 10);
+
+    printf("\nNo. of chars written : %d", n);
+
+    // read(fd, char[], len): reads len bytes from fd and store into char array
+    // return Number of bytes read on success
+    // return 0 on reaching end of file
+    // return -1 on error
+    // return -1 on signal interrupt
+
+    int readFromConsole, writeIntoFile;
+
+    writeIntoFile = open("Sample.txt", O_WRONLY | O_APPEND);
+
+    // readFromConsole stores the length of user input
+    readFromConsole = read(0, buffer, 21);
+
+    // append into file with lenght of user input.
+    write(writeIntoFile, buffer, readFromConsole);
+
+    return;
+}
+
 void openFile()
 {
     int fd;
@@ -50,7 +171,7 @@ void openFile()
     // read from stdin into buffer for 10 units
     read(0, buffer, 10);
 
-    // write from buffer into console starting from 1 index and length 10;
+    // write from buffer into console of length 10;
     write(1, buffer, 10);
 
     // Close(fd) : Used to close the descriptor.  Returns 0 on success and -1 on error.

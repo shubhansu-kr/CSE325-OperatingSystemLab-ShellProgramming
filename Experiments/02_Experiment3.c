@@ -20,6 +20,47 @@ void practice()
     printf("Hello World");
 }
 
+void openFile()
+{
+    int fd;
+    // fd is file descriptor: An integer which identifies the open file of the process.
+
+    // There are three standard file descriptor:
+    // 0 : Read from stdin
+    // 1 : Write to stdout
+    // 2 : Write to stderr
+
+    // Usually the first fd which is assigned to user is 3 because {0, 1, 2} are reserved.
+    // Open functions returs a -1 when there is any error in opening file.
+
+    char buffer[100];
+
+    // Open file in read only mode.
+    fd = open("Sample.txt", O_RDONLY);
+
+    if (fd < 0)
+    {
+        perror("Error Opening the file");
+        return;
+    }
+
+    printf("Opened file with descriptor: ");
+    printf("%d\n", fd); // 3 : Default value of first fd availabe.'
+
+    // read from stdin into buffer for 10 units
+    read(0, buffer, 10);
+
+    // write from buffer into console starting from 1 index and length 10;
+    write(1, buffer, 10);
+
+    // Close(fd) : Used to close the descriptor.  Returns 0 on success and -1 on error.
+    if (close(fd) == -1)
+    {
+        perror("Error Closing the file");
+        return;
+    }
+}
+
 void readFile()
 {
 
@@ -61,12 +102,12 @@ void readFile()
     close(fd);
 }
 
-
-void createWrite(){
+void createWrite()
+{
 
     int fd;
     char buffer[12] = "hell";
-    
+
     // open file in read and write mode.
     fd = open("Dummy.txt", O_RDWR | O_CREAT);
     printf("%d\n", fd);
@@ -74,14 +115,15 @@ void createWrite(){
     // handle error.
     if (fd < 0)
     {
-        // Prompt error: 
+        // Prompt error:
         perror("open/create");
         return 1;
     }
-    
+
     int ch = write(fd, buffer, 4);
 
-    if (ch != 4){
+    if (ch != 4)
+    {
         perror("Read");
         printf("Error writing the file");
         return 1;
@@ -89,7 +131,6 @@ void createWrite(){
 
     close(fd);
 }
-
 
 int main()
 {

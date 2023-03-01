@@ -20,30 +20,52 @@ void practice()
     printf("Hello World");
 }
 
-void fileToConsole() {
-    FILE* ptr;
-	char ch;
+void noCharArray()
+{
+    int fd = open("Sample.txt", O_RDONLY);
+    int fileSize = lseek(fd, 0, SEEK_END);
 
-	// Opening file in reading mode
-	ptr = fopen("Sample.txt", "r");
+    printf("%d\n", sizeof(char));
+    char *buffer = (char *)malloc((fileSize + 1) * sizeof(char));
 
-	if (NULL == ptr) {
-		printf("file can't be opened \n");
-	}
+    lseek(fd, 0, SEEK_SET);
+    int rd = read(fd, buffer, fileSize);
+    buffer[rd] = '\0';
 
-	printf("content of this file are \n");
-
-	do {
-		ch = fgetc(ptr);
-		printf("%c", ch);
-
-	} while (ch != EOF);
-
-	fclose(ptr);
-	return 0;
+    for (int i = 0; buffer[i] != '\0'; ++i)
+    {
+        printf("%c", buffer[i]);
+    }
 }
 
-void printWithoutUsingCharArray() {
+void fileToConsole()
+{
+    FILE *ptr;
+    char ch;
+
+    // Opening file in reading mode
+    ptr = fopen("Sample.txt", "r");
+
+    if (NULL == ptr)
+    {
+        printf("file can't be opened \n");
+    }
+
+    printf("content of this file are \n");
+
+    do
+    {
+        ch = fgetc(ptr);
+        printf("%c", ch);
+
+    } while (ch != EOF);
+
+    fclose(ptr);
+    return 0;
+}
+
+void printWithoutUsingCharArray()
+{
     // Exercise Q3
     char ch;
     int counter = 0;
@@ -52,16 +74,17 @@ void printWithoutUsingCharArray() {
 
     printf("Enter $ to exit \n");
     do
-    {   
+    {
         scanf("%c", &ch);
         buffer[0] = ch;
         write(fd, buffer, 1);
     } while (ch != '$');
-    
+
     return;
 }
 
-void consoleToFile(){
+void consoleToFile()
+{
     // Exercise Q2
 
     int maxSize;
@@ -75,7 +98,7 @@ void consoleToFile(){
 
     printf("Enter $ to exit \n");
     do
-    {   
+    {
         printf("Enter char: ");
         scanf("%c", &ch);
         buffer[counter++] = ch;
@@ -86,12 +109,11 @@ void consoleToFile(){
     int fd = open("Sample.txt", O_WRONLY);
     write(fd, buffer, counter);
 
-
     for (int i = 0; i < buffer[i] != '\0'; ++i)
     {
         printf("%c", buffer[i]);
     }
-    
+
     return;
 }
 

@@ -10,6 +10,7 @@ using namespace std;
 struct Process {
     int id;
     int priority;
+    int arrival_time;
     int burst_time;
     int remaining_time;
     int executed_time;
@@ -22,17 +23,25 @@ struct ComparePriority {
     }
 };
 
+void createProcess() {
+    int n;
+    cout << "Enter the number of process: ";
+    cin >> n;
+
+    
+}
+
 int main() {
     // initialize the two priority queues for the two levels
     priority_queue<Process, vector<Process>, ComparePriority> q1; // higher priority
     queue<Process> q2; // lower priority
 
     // add some sample processes to the higher priority queue (queue 1)
-    q1.push({1, 0, 8, 8, 0});
-    q1.push({2, 1, 10, 10, 0});
-    q1.push({3, 0, 6, 6, 0});
+    q1.push({1, 0, 0, 8, 8, 0});
+    q1.push({2, 0, 1, 10, 10, 0});
+    q1.push({3, 0, 0, 6, 6, 0});
 
-    q1.push({4, 2, 7, 7, 0});
+    q1.push({4, 0, 2, 7, 7, 0});
 
     int current_time = 0; // current time in the simulation
     Process current_process; // current process being executed

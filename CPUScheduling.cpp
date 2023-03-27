@@ -1,4 +1,4 @@
-// Round Robin: 
+// MultiLevel Queue CPU Scheduling : Q1: Priority Q2: RoundRobin
 
 #include <bits/stdc++.h>
 #include <windows.h>

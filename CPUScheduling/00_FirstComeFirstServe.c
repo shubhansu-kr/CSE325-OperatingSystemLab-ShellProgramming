@@ -1,62 +1,93 @@
 #include <stdio.h>
 
-#define MAX_PROCESSES 100
-
 struct Process {
-    int pid;
-    int arrival_time;
-    int burst_time;
+    int pId;
+    int arrivalTime;
+    int burstTime;
 };
 
-void FCFS(struct Process p[], int n) {
-    int waiting_time[MAX_PROCESSES];
-    int turnaround_time[MAX_PROCESSES];
-    int total_waiting_time = 0;
-    int total_turnaround_time = 0;
-    int current_time = 0;
+void sortProcess(struct Process pcb[], int n) {
+    for (int i = 0; i < n; ++i)
+    {
+        struct Process mini;
+        mini.arrivalTime = __INT_MAX__;
+        int index = i;
 
-    for (int i = 0; i < n; i++) {
-        if (current_time < p[i].arrival_time) {
-            current_time = p[i].arrival_time;
+        for (int j = i; j < n; ++j)
+        {
+            if (mini.arrivalTime > pcb[j].arrivalTime) {
+                mini = pcb[j];
+                index = j;
+            }
         }
 
-        waiting_time[i] = current_time - p[i].arrival_time;
-        total_waiting_time += waiting_time[i];
-
-        current_time += p[i].burst_time;
-
-        turnaround_time[i] = current_time - p[i].arrival_time;
-        total_turnaround_time += turnaround_time[i];
+        // swap i, minJ
+        mini = pcb[i];
+        pcb[i] = pcb[index];
+        pcb[index] = mini;        
     }
+    
+}
 
-    printf("PID\tAT\tBT\tWT\tTAT\n");
+void FCFS(struct Process pcb[], int n) {
+    int WT[n], TAT[n], CT[n];
+
+    int totalWT = 0, totalTAT = 0, currentTime = 0;
 
     for (int i = 0; i < n; i++) {
-        printf("%d\t%d\t%d\t%d\t%d\n", p[i].pid, p[i].arrival_time, p[i].burst_time, waiting_time[i], turnaround_time[i]);
+        if (currentTime < pcb[i].arrivalTime) {
+            currentTime = pcb[i].arrivalTime;
+        }
+
+
+        currentTime += pcb[i].burstTime;
+
+        CT[i] = currentTime;
+
+        TAT[i] = CT[i] - pcb[i].arrivalTime;
+        totalTAT += TAT[i];
+
+        WT[i] = TAT[i] - pcb[i].burstTime;
+        totalWT += WT[i];
     }
 
-    float avg_waiting_time = (float)total_waiting_time / n;
-    float avg_turnaround_time = (float)total_turnaround_time / n;
+    printf("PID\tAT\tBT\tCT\tTAT\tWT\n");
 
-    printf("Average waiting time: %.2f\n", avg_waiting_time);
-    printf("Average turnaround time: %.2f\n", avg_turnaround_time);
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t%d\t%d\t%d\t%d\n", pcb[i].pId, pcb[i].arrivalTime, pcb[i].burstTime, CT[i], TAT[i], WT[i]);
+    }
+
+    float averageWT = (float)totalWT / n;
+    float averageTAT = (float)totalTAT / n;
+
+    printf("\nAverage waiting time: %.2f\n", averageWT);
+    printf("Average turnaround time: %.2f\n", averageTAT);
 }
 
 int main() {
     int n;
-    struct Process p[MAX_PROCESSES];
 
     printf("Enter the number of processes: ");
     scanf("%d", &n);
 
-    printf("Enter the arrival time and burst time of each process:\n");
+    struct Process pcb[n];
+
+    printf("Enter the arrival time and burst time of each process:\n\n");
     for (int i = 0; i < n; i++) {
         printf("Process %d: ", i + 1);
-        scanf("%d %d", &p[i].arrival_time, &p[i].burst_time);
-        p[i].pid = i + 1;
+
+        printf("\n\nArrivalTime: ");
+        scanf("%d", &pcb[i].arrivalTime);
+        printf("BurstTime: ");
+        scanf("%d", &pcb[i].burstTime);
+        printf("\n");
+
+        pcb[i].pId = i + 1;
     }
 
-    FCFS(p, n);
+    sortProcess(pcb, n);
+
+    FCFS(pcb, n);
 
     return 0;
 }

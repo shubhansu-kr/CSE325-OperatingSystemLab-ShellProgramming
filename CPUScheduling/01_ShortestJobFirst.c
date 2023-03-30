@@ -90,6 +90,59 @@ void SJF(struct Process pcb[], int n)
     printf("Average turnaround time: %.2f\n", averageTAT);
 }
 
+void SJF1(struct Process pcb[], int n) {
+    int WT[n], TAT[n], CT[n], BT[n];
+    int totalWT = 0, totalTAT = 0, currentTime = 0, completedCount = 0;
+
+    while (completedCount < n) {
+        int index = -1;
+        int minBT = __INT_MAX__;
+
+        for (int i = 0; i < n; i++) {
+            if (pcb[i].arrivalTime <= currentTime) {
+                if (pcb[i].burstTime < minBT) {
+                    index = i;
+                    minBT = pcb[i].burstTime;
+                }
+            }
+        }
+
+        if (index == -1) {
+            currentTime++;
+            continue;
+        }
+
+
+        currentTime += pcb[index].burstTime;
+
+        CT[index] = currentTime;
+
+        TAT[index] = CT[index] - pcb[index].arrivalTime;
+        totalTAT += TAT[index];
+
+        WT[index] = TAT[index] - pcb[index].burstTime;
+        totalWT += WT[index];
+
+        BT[index] = pcb[index].burstTime;
+        pcb[index].burstTime = __INT_MAX__;
+
+        ++completedCount;
+    }
+
+    printf("PID\tAT\tBT\tCT\tTAT\tWT\n");
+
+    for (int i = 0; i < n; i++)
+    {
+        printf("%d\t%d\t%d\t%d\t%d\t%d\n", pcb[i].pId, pcb[i].arrivalTime, BT[n], CT[i], TAT[i], WT[i]);
+    }
+
+    float averageWT = (float)totalWT / n;
+    float averageTAT = (float)totalTAT / n;
+
+    printf("\nAverage waiting time: %.2f\n", averageWT);
+    printf("Average turnaround time: %.2f\n", averageTAT);
+}
+
 int main()
 {
     int n;

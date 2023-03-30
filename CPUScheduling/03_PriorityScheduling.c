@@ -1,81 +1,151 @@
 #include <stdio.h>
 
-#define MAX_PROCESSES 100
-
 struct Process {
-    int pid;
-    int arrival_time;
-    int burst_time;
+    int pId;
+    int arrivalTime;
+    int burstTime;
     int priority;
 };
 
-void priority_scheduling(struct Process p[], int n) {
-    int waiting_time[MAX_PROCESSES];
-    int turnaround_time[MAX_PROCESSES];
-    int completed[MAX_PROCESSES] = {0};
-    int total_waiting_time = 0;
-    int total_turnaround_time = 0;
-    int current_time = 0;
-    int completed_count = 0;
+void nonPreemptivePriorityScheduling(struct Process p[], int n) {
+    int WT[n], TAT[n], CT[n], completed[n];
+    int totalWT = 0, totalTAT = 0, currentTime = 0, completedCount = 0;
 
-    while (completed_count < n) {
-        int highest_priority_index = -1;
-        int highest_priority = -1;
+    for(int i = 0; i < n; ++i) completed[i] = 0;
+
+    while (completedCount < n) {
+        int index = -1;
+        int maxPriority = -1;
 
         for (int i = 0; i < n; i++) {
-            if (p[i].arrival_time <= current_time && completed[i] == 0) {
-                if (p[i].priority > highest_priority) {
-                    highest_priority_index = i;
-                    highest_priority = p[i].priority;
+            if (p[i].arrivalTime <= currentTime && completed[i] == 0) {
+                if (p[i].priority > maxPriority) {
+                    index = i;
+                    maxPriority = p[i].priority;
                 }
             }
         }
 
-        if (highest_priority_index == -1) {
-            current_time++;
+        if (index == -1) {
+            currentTime++;
             continue;
         }
 
-        waiting_time[highest_priority_index] = current_time - p[highest_priority_index].arrival_time;
-        total_waiting_time += waiting_time[highest_priority_index];
+        currentTime += p[index].burstTime;
 
-        turnaround_time[highest_priority_index] = current_time - p[highest_priority_index].arrival_time + p[highest_priority_index].burst_time;
-        total_turnaround_time += turnaround_time[highest_priority_index];
+        CT[index] = currentTime;
 
-        completed[highest_priority_index] = 1;
-        completed_count++;
+        TAT[index] = CT[index] - p[index].arrivalTime;
+        totalTAT += TAT[index];
 
-        current_time += p[highest_priority_index].burst_time;
+
+        WT[index] = TAT[index] - p[index].burstTime;
+        totalWT += WT[index];
+
+        completed[index] = 1;
+        completedCount++;
+
     }
 
-    printf("PID\tAT\tBT\tPriority\tWT\tTAT\n");
+    printf("PID\tAT\tBT\tPriority\tTAT\tWT\n");
 
     for (int i = 0; i < n; i++) {
-        printf("%d\t%d\t%d\t%d\t\t%d\t%d\n", p[i].pid, p[i].arrival_time, p[i].burst_time, p[i].priority, waiting_time[i], turnaround_time[i]);
+        printf("%d\t%d\t%d\t%d\t\t%d\t%d\n", p[i].pId, p[i].arrivalTime, p[i].burstTime, p[i].priority, TAT[i], WT[i]);
     }
 
-    float avg_waiting_time = (float)total_waiting_time / n;
-    float avg_turnaround_time = (float)total_turnaround_time / n;
+    float averageWT = (float)totalWT / n;
+    float averageTAT = (float)totalTAT / n;
 
-    printf("Average waiting time: %.2f\n", avg_waiting_time);
-    printf("Average turnaround time: %.2f\n", avg_turnaround_time);
+    printf("\nAverage waiting time: %.2f\n", averageWT);
+    printf("Average turnaround time: %.2f\n", averageTAT);
+}
+
+void preemptivePriorityScheduling(struct Process p[], int n) {
+    int WT[n], TAT[n], remainingTime[n], CT[n];
+    int totalWT = 0, totalTAT = 0, currentTime = 0, completedCount = 0;
+
+    // Initialize remaining burst time to burst time
+    for (int i = 0; i < n; i++) {
+        remainingTime[i] = p[i].burstTime;
+    }
+
+    while (completedCount < n) {
+        int index = -1;
+        int maxPriority = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (p[i].arrivalTime <= currentTime && remainingTime[i] > 0) {
+                if (p[i].priority > maxPriority) {
+                    index = i;
+                    maxPriority = p[i].priority;
+                }
+            }
+        }
+
+        if (index == -1) {
+            currentTime++;
+            continue;
+        }
+
+        remainingTime[index]--;
+
+        // Process Completion
+        if (remainingTime[index] == 0) {
+
+            CT[index] = currentTime;
+
+            TAT[index] = CT[index] - p[index].arrivalTime;
+            totalTAT += TAT[index];
+
+
+            WT[index] = TAT[index] - p[index].burstTime;
+            totalWT += WT[index];
+
+            ++completedCount;
+        }
+
+        ++currentTime;
+    }
+
+    printf("PID\tAT\tBT\tPriority\tTAT\tWT\n");
+
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t%d\t%d\t\t%d\t%d\n", p[i].pId, p[i].arrivalTime, p[i].burstTime, p[i].priority, TAT[i], WT[i]);
+    }
+
+    float averageWT = (float)totalWT / n;
+    float averageTAT = (float)totalTAT / n;
+
+    printf("\nAverage waiting time: %.2f\n", averageWT);
+    printf("Average turnaround time: %.2f\n", averageTAT);
+    
 }
 
 int main() {
     int n;
-    struct Process p[MAX_PROCESSES];
 
     printf("Enter the number of processes: ");
     scanf("%d", &n);
 
-    printf("Enter the arrival time, burst time and priority of each process:\n");
+    struct Process pcb[n];
+
+    printf("Enter the arrival time and burst time of each process:\n\n");
     for (int i = 0; i < n; i++) {
         printf("Process %d: ", i + 1);
-        scanf("%d %d %d", &p[i].arrival_time, &p[i].burst_time, &p[i].priority);
-        p[i].pid = i + 1;
+
+        printf("\n\nArrivalTime: ");
+        scanf("%d", &pcb[i].arrivalTime);
+        printf("BurstTime: ");
+        scanf("%d", &pcb[i].burstTime);
+        printf("Priority: ");
+        scanf("%d", &pcb[i].priority);
+        printf("\n");
+
+        pcb[i].pId = i + 1;
     }
 
-    priority_scheduling(p, n);
+    nonPreemptivePriorityScheduling(pcb, n);
+    PreemptivePriorityScheduling(pcb, n);
 
     return 0;
 }

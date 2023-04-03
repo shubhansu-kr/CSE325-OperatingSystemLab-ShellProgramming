@@ -69,6 +69,7 @@ vector<Process> createProcess() {
     return p;
 }
 
+// Insert Process in Arrival Queue(Priority Based).
 void setArrivalQueue(vector<Process> &p, priority_queue<Process, vector<Process>, CompareAT> &q) {
     for(auto &it: p){q.push(it);}
 }
@@ -78,16 +79,27 @@ int main() {
     priority_queue<Process, vector<Process>, ComparePriority> q1; // higher priority
     queue<Process> q2; // lower priority
 
+    // Process vector recieved from user Input.
     vector<Process> p = createProcess();
+
+    // Min. heap priority queue (Arrival time Priority)
     priority_queue<Process, vector<Process>, CompareAT> AT; 
     setArrivalQueue(p, AT);
 
+    // Vector to store gantt chart
+    vector<pair<int, int>> gc;
+
+    // No. of processes.
     int n = p.size();
+
+    // Array to store the final result of execution.
     vector<vector<int>> result(n, vector<int>(6, -1)); // priority, at, bt, ct, tat, wt
 
     int currentTime = 0; // current time in the simulation
     int idle = 1;        // initially cpu is idle. 
     int flag = 0;        // initially q1 is expected.
+
+    int lastSlice = 0;
 
     Process currentProcess = Process(); // current process being executed
 
@@ -117,7 +129,8 @@ int main() {
         }
 
         // cout << currentTime << " : " << currentProcess.id << endl;
-        
+        gc.emplace_back(pair<int, int>({currentTime, currentProcess.id}));
+
         // Execution cycle.
         
         if (idle) {
@@ -131,6 +144,7 @@ int main() {
         currentProcess.executedTime += timeSlice;
         currentTime += timeSlice;
 
+        lastSlice = timeSlice;
 
         // check if the current process has finished
         if (currentProcess.remainingTime == 0) {
@@ -185,7 +199,7 @@ int main() {
         WTSum += result[i][5];
     }
     
-    float AverageTAT = TATSum/n, AverageWT = WTSum/n;
+    float AverageTAT = (float)TATSum/n, AverageWT = (float)WTSum/n;
 
     cout << "\n\n";
 
@@ -199,6 +213,25 @@ int main() {
     cout << "Average Turn Around Time: " << AverageTAT << " ms" << endl;
     cout << "Average Wait Time: " << AverageWT << " ms" << endl;
     cout << "\n";
+    
+    cout << "Gantt Chart: \n\n";
+    cout << " Time(ms)\tProcess\n";
 
+    int prev = 0;
+
+    for(int i = 1; i < gc.size(); ++i) {
+
+        if (gc[i].second != gc[i-1].second) {
+            if (gc[i-1].second == 0) {
+                cout << setw(3) << prev << " - " << setw(3) << gc[i-1].first + 1 << "\t" << setw(7) << "idle" << endl;
+            }
+            else {
+                cout << setw(3) << prev << " - " << setw(3) << gc[i-1].first + 1 << "\t" << setw(4) << "p" << gc[i-1].second << endl;
+            }
+            prev = gc[i-1].first + 1;
+        }
+    }
+    cout << setw(3) << prev << " - " << setw(3) << gc[gc.size()-1].first + lastSlice << "\t" << setw(4) << "P" << gc[gc.size()-1].second << endl;
+ 
     return 0;
 }

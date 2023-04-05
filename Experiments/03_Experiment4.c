@@ -1,28 +1,43 @@
+//  Ls - Abstract 
+
 #include <stdio.h>
 #include <dirent.h>
-
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-void createDir() {
+// struct dirent
+// {
+//     Ino_t d_ino;             /* inode number */
+//     off_ t d_off;            /* off_set to the next dirent */
+//     unsigned short d_reclen; /* length of this record */
+//     unsigned char d_type;    /* type of file; not supported by all file system types */
+//     char d_name[256];        /* filename */
+// };
+
+int main (int argc, char *argv[]) {
+    
     DIR *dp;
 
-    // return 0: on successfull completion -1 on failure.
-    int b = mkdir("dir1", 0777);
+    struct dirent *direntPt;
 
-    if (b == 0) {
-        printf("Dir Created Sucessfully\n");
+    if (argc > 1) {
+        dp = opendir(argv[1]);
     }
     else {
-        printf("Dir Not created ");
+        dp = opendir(".");
     }
 
-    dp = opendir("dir1");
+    if (dp == NULL) {
+        printf("Dir %s does not exist", argv[1]);
+        return 0;
+    }
+    
 
-    printf("Dir Opened Sucessfully\n");
-}
+    while(direntPt = readdir(dp)) {
+        printf("\n %d:", direntPt->d_ino);
+        printf(" %s", direntPt->d_name); // display the name of the direct
+    }
 
-int main() {  
-
-    return 0;
+    return 0 ;
 }

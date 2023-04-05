@@ -4,6 +4,35 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
+
+
+void orphanChild() {
+    // If the parent process completes execution before the child process completes it's execution. 
+    // The child process is called orphanChild.
+
+    pid_t pId;
+    int status; 
+
+    pId = fork();  // Create a child process.
+
+    if (pId == -1) {
+        // Failed to create a child process. 
+        printf("Failed to create a child\n");
+    }
+    else if (pId == 0) {
+        // Sucessfully created a child process. 
+        printf("Child Process is running. \n");
+        status = sleep(2);
+        printf("Child process exiting. \n");
+    }
+    else {
+        // Parent Process. 
+        printf("Parent process waiting for child process to complete...\n");
+        wait(&status);
+        printf("Completing parent process.");
+    }
+}
 
 void printFork2() {
 

@@ -6,6 +6,37 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+void exercise4() {
+    
+}
+
+void exercise3() {
+
+}
+
+void exercise2() {
+    // Write a program using systems for operations on processes to create a hierarchy of 
+    // processes P1 → P2 → P3. Also print the id and parent id for each process.
+
+
+
+}
+
+void exercise1() {
+    
+    // Write a program using system calls for operation on process to simulate that n fork calls create (2n – 1) child processes
+
+    int n; 
+    printf("Enter no. of fork calls: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; ++i)
+    {
+        fork();
+    }
+    printf("print statement: Hell");
+    
+}
 
 void orphanChild() {
     // If the parent process completes execution before the child process completes it's execution. 

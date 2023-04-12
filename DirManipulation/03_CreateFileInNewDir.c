@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <dirent.h>
-#include <strings.h>
+#include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -19,6 +19,7 @@ int main (int argc, char *argv[]) {
     }
 
     char newFileName[100] = "./";
+    strcat(newFileName, argv[1]);
     strcat(newFileName, "/file1.txt");
     
     int fd = open(newFileName, O_CREAT, 0777);    

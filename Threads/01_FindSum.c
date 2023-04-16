@@ -8,15 +8,17 @@ void *findSum(void *args) {
 
     // arr++;
 
-    static int sum = 0;
-    for (int i = 1; i < size; ++i)
+    int sum = 0;
+    for (int i = 1; i <= size; ++i)
     {
         sum += *(arr+i);
     }
     
-    printf("Sum of Arr is: ", sum);
+    printf("Sum of Arr is: %d\n", sum);
 
-    return (void *)&sum;
+    pthread_exit(sum);
+
+    return NULL;
 }
 
 int main() {
@@ -31,12 +33,18 @@ int main() {
     for (int i = 1; i <= n; ++i)
     {
         *(arr+i) = i*12;
+        printf("\n %d", i*12);
     }
     
     pthread_t thread;
 
-    int sum = pthread_create(&thread, NULL, findSum, (void *)arr);
-    pthread_join(thread, NULL);
+    // check: 0 : Successfully created thread
+    int check = pthread_create(&thread, NULL, findSum, (void *)arr);
+
+    void *sum;
+
+    // Pass the pointer to pointer to the variable you want to store the result in. 
+    pthread_join(thread, &sum);
 
     printf("sum is %d", sum);
 

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 // shared resource
 int totalBooks = 5;
@@ -9,11 +10,16 @@ int totalBooks = 5;
 // Use lock 
 pthread_mutex_t l1;
 
+sem_t s;
+
+// int sem_init(sem_t *sem, int pshared, unsigned int value)
+// sem_init(&sem, 0, 1): We can initialise the value of semaphore s.
+
 void* returnBook(){
 
 
-    // Take lock(access) on totalBooks
-    pthread_mutex_lock(&l1);
+    // wait
+    sem_wait(&s);
 
     // Critical section starts 
     int local = totalBooks;
@@ -25,8 +31,8 @@ void* returnBook(){
     totalBooks = local;
     // Critical section ends.
 
-    // Release lock on totalBooks.
-    pthread_mutex_unlock(&l1);
+    // Signal
+    sem_post(&s);
 
     printf("R totalBooks: %d\n", totalBooks);
     pthread_exit(NULL);
@@ -34,8 +40,7 @@ void* returnBook(){
 
 void* borrowBook(){
     
-    // Accuire Lock
-    pthread_mutex_lock(&l1);
+    sem_wait(&s);
 
     // Critical section starts.
     int local = totalBooks;
@@ -51,7 +56,7 @@ void* borrowBook(){
     // Critical section ends.
 
     // Release Lock
-    pthread_mutex_unlock(&l1);
+    sem_post(&s);
 
     printf("B totalBooks: %d\n", totalBooks);
     pthread_exit(NULL);

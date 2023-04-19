@@ -67,6 +67,8 @@ int main() {
     printf("totalBooks: %d\n", totalBooks);
 
     pthread_t thread1, thread2;
+    sem_init(&s, 0, 1);
+
 
     pthread_create(&thread1, NULL, returnBook, NULL);
     pthread_create(&thread2, NULL, borrowBook, NULL);

@@ -6,13 +6,13 @@
 
 int main()
 {
-    int fd[2], nb;
+    int fd[2], valid2;
 
-    pid_t cpid;
+    pid_t chileProcess;
 
-    char inf[] = " Welcome to LPU\n";
+    char inputBuffer[] = " Welcome to LPU\n";
 
-    char rbuff[50];
+    char readingBuffer[50];
 
     // Create Pipe:
     // Signature: int pipe(int fd[2]);
@@ -29,14 +29,14 @@ int main()
     // descriptor that a process can use to read the data from the pipe, and fd[1] is a different file
     // descriptor that a process in use to write data to the pipe.
 
-    if ((cpid = fork()) == -1)
+    if ((chileProcess = fork()) == -1)
     {
         printf(" Parent failed to create the child process");
         exit(1);
     }
 
 
-    if (cpid == 0)
+    if (chileProcess == 0)
     {
         // Child Created Sucessfully
         // Block executed in parent process.
@@ -49,10 +49,10 @@ int main()
         close(fd[0]);
 
         // Parent writes in the pipe.
-        write(fd[1], inf, (strlen(inf) + 1));
+        write(fd[1], inputBuffer, (strlen(inputBuffer) + 1));
 
 
-        printf("The information written in the pipe by parent is: %s", inf);
+        printf("The information written in the pipe by parent is: %s", inputBuffer);
         exit(0);
     }
     else
@@ -64,9 +64,9 @@ int main()
         // Child Closes write file descriptor.
         close(fd[1]);
 
-        nb = read(fd[0], rbuff, sizeof(rbuff));
-        
-        printf("The information received by the child process from the pipe is:%s", rbuff);
+        valid2 = read(fd[0], readingBuffer, sizeof(readingBuffer));
+
+        printf("The information received by the child process from the pipe is:%s", readingBuffer);
     }
 
     return (0);

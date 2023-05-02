@@ -12,7 +12,7 @@ void *findLength(void *args){
         ++len;
     }
     
-    pthread_exit(len);
+    pthread_exit(&len);
     return NULL;
 }
 
@@ -28,7 +28,7 @@ int main() {
     pthread_create(&thread, NULL, findLength, (void *)(str));
     pthread_join(thread, &res);
 
-    printf("Length of string is : %s\n", res);
+    printf("Length of string is : %d\n", res);
     
     return 0;
 }

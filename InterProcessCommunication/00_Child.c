@@ -31,7 +31,7 @@ int main()
 
     if ((chileProcess = fork()) == -1)
     {
-        printf(" Parent failed to create the child process");
+        printf("Parent failed to create the child process");
         exit(1);
     }
 
@@ -41,32 +41,32 @@ int main()
         // Child Created Sucessfully
         // Block executed in parent process.
 
-        // Parent has two fd
-        // 1. Read the pipe(fd[0])
-        // 2. Write the pipe(fd[1])
-
-        // Parent closes the read file descriptor.
-        close(fd[0]);
-
-        // Parent writes in the pipe.
-        write(fd[1], inputBuffer, (strlen(inputBuffer) + 1));
-
-
-        printf("The information written in the pipe by parent is: %s", inputBuffer);
-        exit(0);
-    }
-    else
-    {
         // Child has two fd
         // 1. Read the pipe(fd[0])
         // 2. Write the pipe(fd[1])
 
-        // Child Closes write file descriptor.
+        // Child closes the read file descriptor.
+        close(fd[0]);
+
+        // Child writes in the pipe.
+        write(fd[1], inputBuffer, (strlen(inputBuffer) + 1));
+
+
+        printf("The information written in the pipe by child is: %s", inputBuffer);
+        exit(0);
+    }
+    else
+    {
+        // Parent has two fd
+        // 1. Read the pipe(fd[0])
+        // 2. Write the pipe(fd[1])
+
+        // Parent Closes write file descriptor.
         close(fd[1]);
 
         valid2 = read(fd[0], readingBuffer, sizeof(readingBuffer));
 
-        printf("The information received by the child process from the pipe is:%s", readingBuffer);
+        printf("The information received by the parent process from the pipe is:%s", readingBuffer);
     }
 
     return (0);
